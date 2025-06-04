@@ -1,18 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AuthContext from '../context/AuthContext';
 
 const LoginForm = () => {
   const [nomeUsuario, setNomeUsuario] = useState('');
   const [senha, setSenha] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
+  const { login, register } = useContext(AuthContext);
 
   const manipulaLogin = () => {
-    // Verificar se o nome de usuário e a senha são válidos (simplificado para este exemplo)
-    if (nomeUsuario === 'usuario' && senha === 'senha123') {
-      // Redirecionar para a página inicial após o login bem-sucedido
-      // Você pode usar react-router-dom para navegação em uma aplicação React
-      window.location.href = '/pagina-inicial';
+    const sucesso = login(nomeUsuario, senha);
+    if (sucesso) {
+      navigate('/pagina-inicial');
     } else {
       setErrorMessage('Nome de usuário ou senha incorretos.');
+    }
+  };
+
+  const manipulaRegistro = () => {
+    const registrado = register(nomeUsuario, senha);
+    if (registrado) {
+      navigate('/pagina-inicial');
+    } else {
+      setErrorMessage('Usuário já existente.');
     }
   };
 
@@ -34,6 +45,7 @@ const LoginForm = () => {
         required
       />
       <button onClick={manipulaLogin}>Entrar</button>
+      <button onClick={manipulaRegistro}>Registrar</button>
       <p style={{ color: 'red' }}>{errorMessage}</p>
     </div>
   );
